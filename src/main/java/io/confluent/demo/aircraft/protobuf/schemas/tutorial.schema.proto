@@ -1,0 +1,9 @@
+syntax = "proto3";
+
+package io.confluent.demo;
+option java_outer_classname = "User";
+
+message User {
+  string firstName = 1; // First name of the user.
+  string lastName = 2; //  Last name of the user.
+ }

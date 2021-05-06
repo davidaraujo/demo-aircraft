@@ -1,0 +1,46 @@
+{
+  "type": "record",
+  "namespace": "io.confluent.demo",
+  "name": "User",
+  "fields": [
+    {
+      "name": "firstName",
+      "type": "string",
+      "doc": "First name of the user."
+    },
+    {
+      "name": "lastName",
+      "type": [
+        "null",
+        "string"
+      ],
+      "default": null
+    },
+    {
+      "name": "status",
+      "type": [
+        "null",
+        "int"
+      ],
+      "default": null
+    },
+    {
+      "name": "age",
+      "type": [
+        "null",
+        "long"
+      ],
+      "default": null,
+      "doc": "Age of the user."
+    },
+    {
+      "name": "email",
+      "type": [
+        "null",
+        "string"
+      ],
+      "default": null,
+      "doc": "Email of the user."
+    }
+  ]
+}
