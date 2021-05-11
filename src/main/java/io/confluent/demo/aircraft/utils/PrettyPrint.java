@@ -4,7 +4,7 @@ import org.json.JSONObject;
 
 public class PrettyPrint {
 
-    public static void producerRecord(String clientId, String topicName, long partition, long offset, String key, String value) {
+    public static void producerRecord(String clientId, String topicName, long partition, long offset, String key, String value, String formatType) {
         System.out.print(ColouredSystemOutPrintln.ANSI_BLACK + ColouredSystemOutPrintln.ANSI_BG_GREEN);
         System.out.printf(
                  clientId +
@@ -15,13 +15,18 @@ public class PrettyPrint {
                         " partition [%d] @ offset %d" + ColouredSystemOutPrintln.ANSI_RESET,
                 partition, offset);
         System.out.print("\n" + ColouredSystemOutPrintln.ANSI_WHITE + ColouredSystemOutPrintln.ANSI_BG_BLUE);
-        System.out.println("key = " + key);
-        JSONObject json = new JSONObject(value);
-        System.out.print("value = " + json.toString(8));
+        System.out.println(ColouredSystemOutPrintln.ANSI_BRIGHT_PURPLE + "key = " +  ColouredSystemOutPrintln.ANSI_WHITE  + key);
+
+        if (formatType.equals("avro")) {
+            JSONObject json = new JSONObject(value);
+            System.out.print(ColouredSystemOutPrintln.ANSI_BRIGHT_PURPLE + "value = " + ColouredSystemOutPrintln.ANSI_WHITE  + json.toString(8));
+        }
+        else
+            System.out.print(ColouredSystemOutPrintln.ANSI_BRIGHT_PURPLE +  "value = \n" + ColouredSystemOutPrintln.ANSI_WHITE  + value);
         System.out.println(ColouredSystemOutPrintln.ANSI_RESET);
     }
 
-    public static void consumerRecord(String groupId, String clientId, String topicName, long partition, long offset, String key, String value) {
+    public static void consumerRecord(String groupId, String clientId, String topicName, long partition, long offset, String key, String value, String formatType) {
         System.out.print(ColouredSystemOutPrintln.ANSI_BLACK + ColouredSystemOutPrintln.ANSI_BG_GREEN);
         System.out.printf(
                 clientId +" @ " + groupId +
@@ -31,16 +36,22 @@ public class PrettyPrint {
                         ColouredSystemOutPrintln.ANSI_BLACK + ColouredSystemOutPrintln.ANSI_BG_GREEN +
                         " partition [%d] @ offset %d" + ColouredSystemOutPrintln.ANSI_RESET,
                 partition, offset);
-        if (groupId.equals("OnGroundService"))
+        if (groupId.startsWith("OnGroundService"))
             System.out.print("\n" + ColouredSystemOutPrintln.ANSI_BLACK + ColouredSystemOutPrintln.ANSI_BG_YELLOW);
-        else if (groupId.equals("InFlightService"))
+        else if (groupId.startsWith("InFlightService"))
             System.out.print("\n" + ColouredSystemOutPrintln.ANSI_BLACK + ColouredSystemOutPrintln.ANSI_BG_CYAN);
+        else if (groupId.startsWith("UnidentifiedService"))
+            System.out.print("\n" + ColouredSystemOutPrintln.ANSI_WHITE + ColouredSystemOutPrintln.ANSI_BG_RED);
         else
             System.out.print("\n" + ColouredSystemOutPrintln.ANSI_BLACK + ColouredSystemOutPrintln.ANSI_BG_CYAN);
 
         System.out.println("key = " + key);
-        JSONObject json = new JSONObject(value);
-        System.out.print("value = " + json.toString(8));
+        if (formatType.equals("avro")) {
+            JSONObject json = new JSONObject(value);
+            System.out.print("value = " + json.toString(8));
+        }
+        else
+            System.out.print("value = " + value);
         System.out.println(ColouredSystemOutPrintln.ANSI_RESET);
     }
 }

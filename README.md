@@ -158,9 +158,60 @@ mvn test
 
 To run an instance of TrackingService producer application :
 
+In Avro format
 ```bash
-mvn exec:java -Dexec.mainClass="io.confluent.demo.aircraft.avro.producer.TrackingService" -Dexec.args="./src/main/resources ccloud_prod_catalog.properties opensky.properties tracking.aviation.aircraft TrackingService"
+mvn exec:java -Dexec.mainClass="io.confluent.demo.aircraft.avro.producer.TrackingService" -Dexec.args="./src/main/resources ccloud_prod_catalog.properties opensky.properties tracking.aviation.aircraft.avro TrackingService.avro"
 ```
+```bash
+mvn exec:java -Dexec.mainClass="io.confluent.demo.aircraft.avro.kstreams.RouterKStreamsService" -Dexec.args="./src/main/resources ccloud_prod_catalog.properties RouterService.avro tracking.aviation.aircraft.avro tracking.aviation.aircraft_onground.avro tracking.aviation.aircraft_inflight.avro tracking.aviation.aircraft_unidentified.avro Kstreams.avro.client.1"
+```
+```bash
+mvn exec:java -Dexec.mainClass="io.confluent.demo.aircraft.avro.consumer.GenericAvroConsumerService" -Dexec.args="./src/main/resources ccloud_prod_catalog.properties tracking.aviation.aircraft_onground.avro OnGroundService.avro OnGroundConsumer.avro.client.1"
+```
+```bash
+mvn exec:java -Dexec.mainClass="io.confluent.demo.aircraft.avro.consumer.GenericAvroConsumerService" -Dexec.args="./src/main/resources ccloud_prod_catalog.properties tracking.aviation.aircraft_inflight.avro InFlightService.avro InFlightConsumer.avro.client.1"
+```
+```bash
+mvn exec:java -Dexec.mainClass="io.confluent.demo.aircraft.avro.consumer.GenericAvroConsumerService" -Dexec.args="./src/main/resources ccloud_prod_catalog.properties tracking.aviation.aircraft_unidentified.avro UnidentifiedService.avro UnidentifiedConsumer.avro.client.1"
+```
+
+
+
+In JSON Schema format
+```bash
+mvn exec:java -Dexec.mainClass="io.confluent.demo.aircraft.jsonschema.producer.TrackingService" -Dexec.args="./src/main/resources ccloud_prod_catalog.properties opensky.properties tracking.aviation.aircraft.json TrackingService.json"
+```
+```bash
+mvn exec:java -Dexec.mainClass="io.confluent.demo.aircraft.jsonschema.kstreams.RouterKStreamsService" -Dexec.args="./src/main/resources ccloud_prod_catalog.properties RouterService.json tracking.aviation.aircraft.json tracking.aviation.aircraft_onground.json tracking.aviation.aircraft_inflight.json tracking.aviation.aircraft_unidentified.json Kstreams.json.client.1"
+```
+```bash
+mvn exec:java -Dexec.mainClass="io.confluent.demo.aircraft.jsonschema.consumer.GenericJsonConsumerService" -Dexec.args="./src/main/resources ccloud_prod_catalog.properties tracking.aviation.aircraft_onground.json OnGroundService.json OnGroundConsumer.json.client.1"
+```
+```bash
+mvn exec:java -Dexec.mainClass="io.confluent.demo.aircraft.jsonschema.consumer.GenericJsonConsumerService" -Dexec.args="./src/main/resources ccloud_prod_catalog.properties tracking.aviation.aircraft_inflight.json InFlightService.json InFlightConsumer.json.client.1"
+```
+```bash
+mvn exec:java -Dexec.mainClass="io.confluent.demo.aircraft.jsonschema.consumer.GenericJsonConsumerService" -Dexec.args="./src/main/resources ccloud_prod_catalog.properties tracking.aviation.aircraft_unidentified.json UnidentifiedService.json UnidentifiedConsumer.json.client.1"
+```
+
+In Protobuf format
+```bash
+mvn exec:java -Dexec.mainClass="io.confluent.demo.aircraft.protobuf.producer.TrackingService" -Dexec.args="./src/main/resources ccloud_prod_catalog.properties opensky.properties tracking.aviation.aircraft.protobuf TrackingService.protobuf"
+```
+```bash
+mvn exec:java -Dexec.mainClass="io.confluent.demo.aircraft.protobuf.kstreams.RouterKStreamsService" -Dexec.args="./src/main/resources ccloud_prod_catalog.properties RouterService.protobuf tracking.aviation.aircraft.protobuf tracking.aviation.aircraft_onground.protobuf tracking.aviation.aircraft_inflight.protobuf tracking.aviation.aircraft_unidentified.protobuf Kstreams.protobuf.client.1"
+```
+```bash
+mvn exec:java -Dexec.mainClass="io.confluent.demo.aircraft.protobuf.consumer.GenericProtobufConsumerService" -Dexec.args="./src/main/resources ccloud_prod_catalog.properties tracking.aviation.aircraft_onground.protobuf OnGroundService.protobuf OnGroundConsumer.protobuf.client.1"
+```
+```bash
+mvn exec:java -Dexec.mainClass="io.confluent.demo.aircraft.protobuf.consumer.GenericProtobufConsumerService" -Dexec.args="./src/main/resources ccloud_prod_catalog.properties tracking.aviation.aircraft_inflight.protobuf InFlightService.protobuf InFlightConsumer.protobuf.client.1"
+```
+```bash
+mvn exec:java -Dexec.mainClass="io.confluent.demo.aircraft.protobuf.consumer.GenericProtobufConsumerService" -Dexec.args="./src/main/resources ccloud_prod_catalog.properties tracking.aviation.aircraft_unidentified.protobuf UnidentifiedService.protobuf UnidentifiedConsumer.protobuf.client.1"
+```
+
+
 
 To run an instance of RouterService KStreams application :
 

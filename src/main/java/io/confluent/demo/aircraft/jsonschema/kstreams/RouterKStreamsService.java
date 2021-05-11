@@ -14,14 +14,14 @@
  * limitations under the License.
  */
 
-package io.confluent.demo.aircraft.avro.kstreams;
+package io.confluent.demo.aircraft.jsonschema.kstreams;
 
-import io.confluent.demo.aircraft.avro.pojo.AircraftState;
+import io.confluent.demo.aircraft.jsonschema.pojo.AircraftState;
 import io.confluent.demo.aircraft.utils.ClientsUtils;
 import io.confluent.demo.aircraft.utils.ColouredSystemOutPrintln;
 import io.confluent.demo.aircraft.utils.TopicAdmin;
 import io.confluent.kafka.serializers.AbstractKafkaSchemaSerDeConfig;
-import io.confluent.kafka.streams.serdes.avro.SpecificAvroSerde;
+import io.confluent.kafka.streams.serdes.json.KafkaJsonSchemaSerde;
 import org.apache.kafka.common.serialization.Serdes;
 import org.apache.kafka.streams.KafkaStreams;
 import org.apache.kafka.streams.StreamsBuilder;
@@ -62,7 +62,8 @@ public class RouterKStreamsService {
         props.put(StreamsConfig.CLIENT_ID_CONFIG, clientId);
         props.put(StreamsConfig.CACHE_MAX_BYTES_BUFFERING_CONFIG, 0);
         props.put(StreamsConfig.DEFAULT_KEY_SERDE_CLASS_CONFIG, Serdes.String().getClass().getName());
-        props.put(StreamsConfig.DEFAULT_VALUE_SERDE_CLASS_CONFIG, SpecificAvroSerde.class);
+        props.put(StreamsConfig.DEFAULT_VALUE_SERDE_CLASS_CONFIG, KafkaJsonSchemaSerde.class);
+        props.put("json.value.type", "io.confluent.demo.aircraft.jsonschema.pojo.AircraftState");
         props.put(AbstractKafkaSchemaSerDeConfig.AUTO_REGISTER_SCHEMAS, true);
         //streamsConfiguration.put(ConsumerConfig.AUTO_OFFSET_RESET_CONFIG, "earliest");
 
@@ -126,3 +127,4 @@ public class RouterKStreamsService {
         new RouterKStreamsService(args[0], args[1], args[2], args[3], args[4], args[5], args[6], clientId).run();
     }
 }
+

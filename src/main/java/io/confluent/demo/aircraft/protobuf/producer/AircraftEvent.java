@@ -1,13 +1,13 @@
-package io.confluent.demo.aircraft.jsonschema.producer;
+package io.confluent.demo.aircraft.protobuf.producer;
 
-import io.confluent.demo.aircraft.jsonschema.pojo.AircraftState;
+import io.confluent.demo.aircraft.protobuf.pojo.AircraftState;
 import org.opensky.model.StateVector;
 
 public class AircraftEvent {
     
-    public static AircraftState create(StateVector state) {
+    public static AircraftState.Aircraft create(StateVector state) {
 
-        AircraftState event = new AircraftState();
+        AircraftState.Aircraft.Builder event = AircraftState.Aircraft.newBuilder();
         
         if (state.getBaroAltitude() != null)
             event.setBaroAltitude(state.getBaroAltitude());
@@ -58,6 +58,6 @@ public class AircraftEvent {
 
         event.setOnGround(state.isOnGround());
         
-        return event;
+        return event.build();
     }
 }

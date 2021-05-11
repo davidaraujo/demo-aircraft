@@ -14,11 +14,10 @@
  * limitations under the License.
  */
 
-package io.confluent.demo.aircraft.avro.consumer;
+package io.confluent.demo.aircraft.protobuf.consumer;
 
 import io.confluent.demo.aircraft.utils.ClientsUtils;
 import io.confluent.demo.aircraft.utils.PrettyPrint;
-import org.apache.avro.generic.GenericRecord;
 import org.apache.kafka.clients.consumer.*;
 
 import java.io.IOException;
@@ -31,7 +30,7 @@ import java.util.Properties;
  * @version 1.1
  * @since 2020-12-22
  */
-public class GenericAvroConsumerService implements Runnable {
+public class GenericProtobufConsumerService implements Runnable {
 
     private final String resourcesDir;
     private final String propertiesFile;
@@ -39,11 +38,11 @@ public class GenericAvroConsumerService implements Runnable {
     private final String groupId;
     private final String clientId;
 
-    public GenericAvroConsumerService(String resourcesDir,
-                                      String propertiesFile,
-                                      String topicName,
-                                      String groupId,
-                                      String clientId
+    public GenericProtobufConsumerService(String resourcesDir,
+                                          String propertiesFile,
+                                          String topicName,
+                                          String groupId,
+                                          String clientId
     ) {
         this.resourcesDir = resourcesDir;
         this.propertiesFile = propertiesFile;
@@ -62,9 +61,7 @@ public class GenericAvroConsumerService implements Runnable {
         // Key deserializer - String
         props.setProperty(ConsumerConfig.KEY_DESERIALIZER_CLASS_CONFIG, "org.apache.kafka.common.serialization.StringDeserializer");
         // Value deserializer - KafkaJsonSchemaSerializer
-        props.setProperty(ConsumerConfig.VALUE_DESERIALIZER_CLASS_CONFIG, "io.confluent.kafka.serializers.KafkaAvroDeserializer");
-        // Using org.apache.avro.GenericRecord - https://docs.confluent.io/platform/current/schema-registry/serdes-develop/serdes-avro.html#avro-deserializer
-        // props.put(KafkaAvroDeserializerConfig.SPECIFIC_AVRO_READER_CONFIG, true);
+        props.setProperty(ConsumerConfig.VALUE_DESERIALIZER_CLASS_CONFIG, "io.confluent.kafka.serializers.protobuf.KafkaProtobufDeserializer");
         // Assign a group id and client id to the consumer
         if (groupId != null)
             props.put(ConsumerConfig.GROUP_ID_CONFIG, groupId);
@@ -72,17 +69,18 @@ public class GenericAvroConsumerService implements Runnable {
             props.put(ConsumerConfig.CLIENT_ID_CONFIG, clientId);
         // Set the offset to earliest
         props.put(ConsumerConfig.AUTO_OFFSET_RESET_CONFIG, "earliest");
+        //props.put(KafkaProtobufDeserializerConfig.SPECIFIC_PROTOBUF_VALUE_TYPE, AircraftState.Aircraft.class.getName());
 
         // ----------------------------- Create Kafka consumer subscribing from topic -----------------------------
-        final Consumer<String, GenericRecord> consumer = new KafkaConsumer<>(props);
+        final Consumer<String, Object> consumer = new KafkaConsumer<>(props);
         consumer.subscribe(Arrays.asList(topicName));
 
         // ----------------------------- Consume records from Kafka -----------------------------
         try {
             while (true) {
-                ConsumerRecords<String, GenericRecord> records = consumer.poll(Duration.ofMillis(100));
-                for (ConsumerRecord<String, GenericRecord> record : records) {
-                    PrettyPrint.consumerRecord(groupId, ((clientId == null)) ? "Unidentified": clientId, topicName, record.partition(), record.offset(), record.key().toString(), record.value().toString(), "avro");
+                ConsumerRecords<String, Object> records = consumer.poll(Duration.ofMillis(100));
+                for (ConsumerRecord<String, Object> record : records) {
+                    PrettyPrint.consumerRecord(groupId, ((clientId == null)) ? "Unidentified": clientId, topicName, record.partition(), record.offset(), record.key().toString(), record.value().toString(), "protobuf");
                 }
             }
         } finally {
@@ -119,13 +117,13 @@ public class GenericAvroConsumerService implements Runnable {
 
         // run one consumer thread
         if (numArgs < 6) {
-            GenericAvroConsumerService microService = new GenericAvroConsumerService(resourcesDir, propertiesFile, topicName, groupId, clientId);
+            GenericProtobufConsumerService microService = new GenericProtobufConsumerService(resourcesDir, propertiesFile, topicName, groupId, clientId);
             new Thread(microService).start();
         }
         // run multiple group and consumer threads
         else for (int g = 0; g < numberGroupThreads; g++) {
             for (int c = 0; c < numberConsumerThreads; c++) {
-                GenericAvroConsumerService microService = new GenericAvroConsumerService(resourcesDir, propertiesFile, topicName, groupId + "." + g, groupId + "." + g + "-" + clientId + "." + c);
+                GenericProtobufConsumerService microService = new GenericProtobufConsumerService(resourcesDir, propertiesFile, topicName, groupId + "." + g, groupId + "." + g + "-" + clientId + "." + c);
                 new Thread(microService).start();
             }
         }

@@ -14,11 +14,10 @@
  * limitations under the License.
  */
 
-package io.confluent.demo.aircraft.avro.consumer;
+package io.confluent.demo.aircraft.jsonschema.consumer;
 
 import io.confluent.demo.aircraft.utils.ClientsUtils;
 import io.confluent.demo.aircraft.utils.PrettyPrint;
-import org.apache.avro.generic.GenericRecord;
 import org.apache.kafka.clients.consumer.*;
 
 import java.io.IOException;
@@ -31,7 +30,7 @@ import java.util.Properties;
  * @version 1.1
  * @since 2020-12-22
  */
-public class GenericAvroConsumerService implements Runnable {
+public class GenericJsonConsumerService implements Runnable {
 
     private final String resourcesDir;
     private final String propertiesFile;
@@ -39,12 +38,11 @@ public class GenericAvroConsumerService implements Runnable {
     private final String groupId;
     private final String clientId;
 
-    public GenericAvroConsumerService(String resourcesDir,
+    public GenericJsonConsumerService(String resourcesDir,
                                       String propertiesFile,
                                       String topicName,
                                       String groupId,
-                                      String clientId
-    ) {
+                                      String clientId) {
         this.resourcesDir = resourcesDir;
         this.propertiesFile = propertiesFile;
         this.topicName = topicName;
@@ -62,9 +60,7 @@ public class GenericAvroConsumerService implements Runnable {
         // Key deserializer - String
         props.setProperty(ConsumerConfig.KEY_DESERIALIZER_CLASS_CONFIG, "org.apache.kafka.common.serialization.StringDeserializer");
         // Value deserializer - KafkaJsonSchemaSerializer
-        props.setProperty(ConsumerConfig.VALUE_DESERIALIZER_CLASS_CONFIG, "io.confluent.kafka.serializers.KafkaAvroDeserializer");
-        // Using org.apache.avro.GenericRecord - https://docs.confluent.io/platform/current/schema-registry/serdes-develop/serdes-avro.html#avro-deserializer
-        // props.put(KafkaAvroDeserializerConfig.SPECIFIC_AVRO_READER_CONFIG, true);
+        props.setProperty(ConsumerConfig.VALUE_DESERIALIZER_CLASS_CONFIG, "io.confluent.kafka.serializers.json.KafkaJsonSchemaDeserializer");
         // Assign a group id and client id to the consumer
         if (groupId != null)
             props.put(ConsumerConfig.GROUP_ID_CONFIG, groupId);
@@ -74,15 +70,15 @@ public class GenericAvroConsumerService implements Runnable {
         props.put(ConsumerConfig.AUTO_OFFSET_RESET_CONFIG, "earliest");
 
         // ----------------------------- Create Kafka consumer subscribing from topic -----------------------------
-        final Consumer<String, GenericRecord> consumer = new KafkaConsumer<>(props);
+        final Consumer<String, Object> consumer = new KafkaConsumer<>(props);
         consumer.subscribe(Arrays.asList(topicName));
 
         // ----------------------------- Consume records from Kafka -----------------------------
         try {
             while (true) {
-                ConsumerRecords<String, GenericRecord> records = consumer.poll(Duration.ofMillis(100));
-                for (ConsumerRecord<String, GenericRecord> record : records) {
-                    PrettyPrint.consumerRecord(groupId, ((clientId == null)) ? "Unidentified": clientId, topicName, record.partition(), record.offset(), record.key().toString(), record.value().toString(), "avro");
+                ConsumerRecords<String, Object> records = consumer.poll(Duration.ofMillis(100));
+                for (ConsumerRecord<String, Object> record : records) {
+                    PrettyPrint.consumerRecord(groupId, ((clientId == null)) ? "Unidentified": clientId, topicName, record.partition(), record.offset(), record.key().toString(), record.value().toString(), "jsonschema");
                 }
             }
         } finally {
@@ -98,14 +94,14 @@ public class GenericAvroConsumerService implements Runnable {
      * @param args [3] The group Id
      * @param args [4] The client Id
      * @param args [5] The number of consumer groups to run
-     * @param args [6] The number of consumers to run
+     * @param args [6] The number of clients inside a group to run
      * @return Nothing.
      */
     public static void main(final String[] args) throws Exception {
         int numArgs = args.length;
 
         if (numArgs < 4) {
-            System.out.println("Please provide command line arguments: resourcesDir propertiesFile topicName groupId clientId(optional) numberGroupThreads(optional) numberConsumerThreads(optional)");
+            System.out.println("Please provide command line arguments: resourcesDir propertiesFile topicName groupId clientId(optional) numberGroupThreads(optional) numberClientThreads(optional)");
             System.exit(1);
         }
 
@@ -115,17 +111,17 @@ public class GenericAvroConsumerService implements Runnable {
         String groupId = args[3] ;
         String clientId = ((numArgs >= 5)) ? args[4] : null;
         int numberGroupThreads = ((numArgs >= 6)) ? Integer.parseInt(args[5]) : 0;
-        int numberConsumerThreads = ((numArgs == 7)) ? Integer.parseInt(args[6]) : 0;
+        int numberClientThreads = ((numArgs == 7)) ? Integer.parseInt(args[6]) : 0;
 
         // run one consumer thread
         if (numArgs < 6) {
-            GenericAvroConsumerService microService = new GenericAvroConsumerService(resourcesDir, propertiesFile, topicName, groupId, clientId);
+            GenericJsonConsumerService microService = new GenericJsonConsumerService(resourcesDir, propertiesFile, topicName, groupId, clientId);
             new Thread(microService).start();
         }
-        // run multiple group and consumer threads
+        // run multiple group and clients threads
         else for (int g = 0; g < numberGroupThreads; g++) {
-            for (int c = 0; c < numberConsumerThreads; c++) {
-                GenericAvroConsumerService microService = new GenericAvroConsumerService(resourcesDir, propertiesFile, topicName, groupId + "." + g, groupId + "." + g + "-" + clientId + "." + c);
+            for (int c = 0; c < numberClientThreads; c++) {
+                GenericJsonConsumerService microService = new GenericJsonConsumerService(resourcesDir, propertiesFile, topicName, groupId + "." + g, groupId + "." + g + "-" + clientId + "." + c);
                 new Thread(microService).start();
             }
         }

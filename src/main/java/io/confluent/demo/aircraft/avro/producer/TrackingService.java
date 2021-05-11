@@ -86,15 +86,14 @@ public class TrackingService implements Runnable {
         while (aircraftEvents.hasNext()) {
             try {
                 AircraftState value = AircraftEvent.create((StateVector) aircraftEvents.next());
-                String key = value.getCallsign().toString();
-
+                String key = value.getCallsign() == null ? "" : value.getCallsign().toString();
                 producer.send(new ProducerRecord<>(topicName, key, value), new Callback() {
                     @Override
                     public void onCompletion(RecordMetadata m, Exception e) {
                         if (e != null) {
                             e.printStackTrace();
                         } else {
-                            PrettyPrint.producerRecord(((clientId == null)) ? "Unidentified": clientId, topicName, m.partition(), m.offset(), key.toString(), value.toString());
+                            PrettyPrint.producerRecord(((clientId == null)) ? "Unidentified": clientId, topicName, m.partition(), m.offset(), key.toString(), value.toString(), "avro");
                         }
                     }
                 });
@@ -105,10 +104,12 @@ public class TrackingService implements Runnable {
                     ex.printStackTrace();
                 }
             } catch (Exception ex) {
+                // NOTE: some records are failing because fields are coming null, e.g. squawk field, and the Avro schema is not setup with null union for those
+                // this is expected to showcase clients failing on serialization from incorrect data
                 System.out.println(ColouredSystemOutPrintln.ANSI_BLACK + ColouredSystemOutPrintln.ANSI_BG_RED);
-                System.out.println(ex.toString());
+                //System.out.println(ex.toString());
                 System.out.println(ex.getCause().getCause());
-                //ex.printStackTrace();
+                ex.printStackTrace();
                 System.out.println(ColouredSystemOutPrintln.ANSI_WHITE + ColouredSystemOutPrintln.ANSI_BG_RED);
                 System.out.println(">>> Skipping bad record.");
                 continue;

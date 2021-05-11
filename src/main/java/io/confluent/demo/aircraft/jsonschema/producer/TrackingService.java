@@ -14,9 +14,9 @@
  * limitations under the License.
  */
 
-package io.confluent.demo.aircraft.avro.producer;
+package io.confluent.demo.aircraft.jsonschema.producer;
 
-import io.confluent.demo.aircraft.avro.pojo.AircraftState;
+import io.confluent.demo.aircraft.jsonschema.pojo.AircraftState;
 import io.confluent.demo.aircraft.utils.*;
 import org.apache.kafka.clients.producer.*;
 import org.opensky.model.StateVector;
@@ -34,7 +34,6 @@ public class TrackingService implements Runnable {
     private final String openSkyPropsFile;
     private final String topicName;
     private final String clientId;
-    private boolean doStop = false;
 
     public TrackingService(String resourcesDir,
                            String confluentPropsFile,
@@ -67,8 +66,10 @@ public class TrackingService implements Runnable {
         props.setProperty("auto.register.schemas", "true");
         // Key serializer - String
         props.setProperty("key.serializer", "org.apache.kafka.common.serialization.StringSerializer");
-        // Value serializer - KafkaAvroSerializer
-        props.setProperty("value.serializer", "io.confluent.kafka.serializers.KafkaAvroSerializer");
+        // Value serializer - KafkaJsonSchemaSerializer
+        props.setProperty("value.serializer", "io.confluent.kafka.serializers.json.KafkaJsonSchemaSerializer");
+        // Set validation for JSONSchema
+        props.setProperty("json.fail.invalid.schema", "true");
 
         // ----------------------------- Create Kafka topic and producer -----------------------------
         // topic creation (if it doesn't exist)
@@ -94,7 +95,7 @@ public class TrackingService implements Runnable {
                         if (e != null) {
                             e.printStackTrace();
                         } else {
-                            PrettyPrint.producerRecord(((clientId == null)) ? "Unidentified": clientId, topicName, m.partition(), m.offset(), key.toString(), value.toString());
+                            PrettyPrint.producerRecord(((clientId == null)) ? "Unidentified": clientId, topicName, m.partition(), m.offset(), key.toString(), value.toString(), "json");
                         }
                     }
                 });
@@ -145,17 +146,6 @@ public class TrackingService implements Runnable {
             airspaceInformation = new TrackingService(resourcesDir, confluentPropsFile, openSkyPropsFile, topicName, clientId + "." + i);
             new Thread(airspaceInformation).start();
         }
-
-        try {
-            Thread.sleep(10L * 1000L);
-        } catch (InterruptedException e) {
-            e.printStackTrace();
-        }
-        airspaceInformation.doStop();
-    }
-
-    public synchronized void doStop() {
-        this.doStop = true;
     }
 
     @Override

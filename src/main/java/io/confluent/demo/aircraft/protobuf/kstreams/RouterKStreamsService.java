@@ -14,14 +14,14 @@
  * limitations under the License.
  */
 
-package io.confluent.demo.aircraft.avro.kstreams;
+package io.confluent.demo.aircraft.protobuf.kstreams;
 
-import io.confluent.demo.aircraft.avro.pojo.AircraftState;
+import io.confluent.demo.aircraft.protobuf.pojo.AircraftState;
 import io.confluent.demo.aircraft.utils.ClientsUtils;
 import io.confluent.demo.aircraft.utils.ColouredSystemOutPrintln;
 import io.confluent.demo.aircraft.utils.TopicAdmin;
 import io.confluent.kafka.serializers.AbstractKafkaSchemaSerDeConfig;
-import io.confluent.kafka.streams.serdes.avro.SpecificAvroSerde;
+import io.confluent.kafka.streams.serdes.protobuf.KafkaProtobufSerde;
 import org.apache.kafka.common.serialization.Serdes;
 import org.apache.kafka.streams.KafkaStreams;
 import org.apache.kafka.streams.StreamsBuilder;
@@ -62,7 +62,8 @@ public class RouterKStreamsService {
         props.put(StreamsConfig.CLIENT_ID_CONFIG, clientId);
         props.put(StreamsConfig.CACHE_MAX_BYTES_BUFFERING_CONFIG, 0);
         props.put(StreamsConfig.DEFAULT_KEY_SERDE_CLASS_CONFIG, Serdes.String().getClass().getName());
-        props.put(StreamsConfig.DEFAULT_VALUE_SERDE_CLASS_CONFIG, SpecificAvroSerde.class);
+        props.put(StreamsConfig.DEFAULT_VALUE_SERDE_CLASS_CONFIG, KafkaProtobufSerde.class);
+        props.put("specific.protobuf.value.type", AircraftState.Aircraft.class.getName());
         props.put(AbstractKafkaSchemaSerDeConfig.AUTO_REGISTER_SCHEMAS, true);
         //streamsConfiguration.put(ConsumerConfig.AUTO_OFFSET_RESET_CONFIG, "earliest");
 
@@ -83,7 +84,7 @@ public class RouterKStreamsService {
         // RULE 1: if callsign is empty move record to unidentified topic
         final KStream<String, Object> ruleUnidentified = flights.
                 filter((k, v) -> (
-                        ((AircraftState) v).getCallsign().equals("")
+                        ((AircraftState.Aircraft) v).getCallsign().equals("")
                 ));
         //ruleUnidentified.print(Printed.toSysOut());
         Printed un = Printed.toSysOut().withLabel(ColouredSystemOutPrintln.ANSI_WHITE + ColouredSystemOutPrintln.ANSI_BG_RED + "Unidentified\n");
@@ -93,8 +94,8 @@ public class RouterKStreamsService {
         // RULE 2: if onground is true move record to onground topic
         final KStream<String, Object> ruleOnGround = flights.
                 filter((k, v) -> (
-                        ((AircraftState) v).getOnGround()
-                 ));
+                        ((AircraftState.Aircraft) v).getOnGround()
+                ));
         //ruleOnGround.print(Printed.toSysOut());
         Printed on = Printed.toSysOut().withLabel(ColouredSystemOutPrintln.ANSI_BLACK + ColouredSystemOutPrintln.ANSI_BG_YELLOW + "OnGround");
         ruleOnGround.print(on);
@@ -103,7 +104,7 @@ public class RouterKStreamsService {
         // RULE 3: if onground is false move record to inflight topic
         final KStream<String, Object> ruleInFlight = flights.
                 filter((k, v) -> (
-                        !((AircraftState) v).getOnGround()
+                        !((AircraftState.Aircraft) v).getOnGround()
                 ));
         //ruleInFlight.print(Printed.toSysOut());
         Printed in = Printed.toSysOut().withLabel(ColouredSystemOutPrintln.ANSI_BLACK + ColouredSystemOutPrintln.ANSI_BG_CYAN + "InFlight");

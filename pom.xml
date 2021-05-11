@@ -238,7 +238,7 @@
                 <artifactId>jsonschema2pojo-maven-plugin</artifactId>
                 <version>${jsonschema2pojo-maven-plugin}</version>
                 <configuration>
-                    <sourceDirectory>src/main/resources/schemas/json/</sourceDirectory>
+                    <sourceDirectory>src/main/java/io/confluent/demo/aircraft/jsonschema/schemas/</sourceDirectory>
                     <targetPackage>io.confluent.demo.aircraft.jsonschema.pojo</targetPackage>
                     <outputDirectory>src/main/java/</outputDirectory>
                     <skip>${skipGenPOJO}</skip>
@@ -264,7 +264,7 @@
                         <configuration>
                             <includeStdTypes>true</includeStdTypes>
                             <inputDirectories>
-                                <include>src/main/resources/schemas/protobuf/
+                                <include>src/main/java/io/confluent/demo/aircraft/protobuf/schemas/
                                 </include>
                             </inputDirectories>
                             <outputTargets>

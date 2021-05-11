@@ -14,9 +14,9 @@
  * limitations under the License.
  */
 
-package io.confluent.demo.aircraft.jsonschema.producer;
+package io.confluent.demo.aircraft.protobuf.producer;
 
-import io.confluent.demo.aircraft.jsonschema.pojo.AircraftState;
+import io.confluent.demo.aircraft.protobuf.pojo.AircraftState;
 import io.confluent.demo.aircraft.utils.*;
 import org.apache.kafka.clients.producer.*;
 import org.opensky.model.StateVector;
@@ -66,10 +66,8 @@ public class TrackingService implements Runnable {
         props.setProperty("auto.register.schemas", "true");
         // Key serializer - String
         props.setProperty("key.serializer", "org.apache.kafka.common.serialization.StringSerializer");
-        // Value serializer - KafkaJsonSchemaSerializer
-        props.setProperty("value.serializer", "io.confluent.kafka.serializers.json.KafkaJsonSchemaSerializer");
-        // Set validation for JSONSchema
-        props.setProperty("json.fail.invalid.schema", "true");
+        // Value serializer - KafkaProtobufSerializer
+        props.setProperty("value.serializer", "io.confluent.kafka.serializers.protobuf.KafkaProtobufSerializer");
 
         // ----------------------------- Create Kafka topic and producer -----------------------------
         // topic creation (if it doesn't exist)
@@ -86,7 +84,7 @@ public class TrackingService implements Runnable {
         // ----------------------------- Produce aircraft location events to Kafka -----------------------------
         while (aircraftEvents.hasNext()) {
             try {
-                AircraftState value = AircraftEvent.create((StateVector) aircraftEvents.next());
+                AircraftState.Aircraft value = AircraftEvent.create((StateVector) aircraftEvents.next());
                 String key = value.getCallsign().toString();
 
                 producer.send(new ProducerRecord<>(topicName, key, value), new Callback() {
@@ -95,7 +93,7 @@ public class TrackingService implements Runnable {
                         if (e != null) {
                             e.printStackTrace();
                         } else {
-                            PrettyPrint.producerRecord(((clientId == null)) ? "Unidentified": clientId, topicName, m.partition(), m.offset(), key.toString(), value.toString());
+                            PrettyPrint.producerRecord(((clientId == null)) ? "Unidentified": clientId, topicName, m.partition(), m.offset(), key.toString(), value.toString(), "protobuf");
                         }
                     }
                 });

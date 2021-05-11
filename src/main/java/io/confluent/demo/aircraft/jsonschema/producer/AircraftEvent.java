@@ -1,28 +1,12 @@
-package io.confluent.demo.aircraft.avro.producer;
+package io.confluent.demo.aircraft.jsonschema.producer;
 
-import io.confluent.demo.aircraft.avro.pojo.AircraftState;
+import io.confluent.demo.aircraft.jsonschema.pojo.AircraftState;
 import org.opensky.model.StateVector;
 
 public class AircraftEvent {
     
     public static AircraftState create(StateVector state) {
-       /* FlightState event = new FlightState();
-                            new FlightState(state.getIcao24(),
-                            state.getCallsign(),
-                            state.getOriginCountry(),
-                            new Double(0),
-                            state.getLastContact().longValue(),
-                            state.getLongitude(),
-                            state.getLatitude(),
-                            state.getBaroAltitude(),
-                            state.getVelocity(),
-                            new Double(0),
-                            state.getVerticalRate(),
-                            state.getGeoAltitude(),
-                            state.getSquawk(),
-                            false,
-                            false,
-                            "");*/
+
         AircraftState event = new AircraftState();
         
         if (state.getBaroAltitude() != null)
@@ -71,7 +55,6 @@ public class AircraftEvent {
 
         if (state.getVerticalRate() != null)
             event.setVerticalRate(state.getVerticalRate());
-        // if version 2 or 3
 
         event.setOnGround(state.isOnGround());
         

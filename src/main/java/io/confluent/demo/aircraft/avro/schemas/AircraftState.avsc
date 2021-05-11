@@ -9,9 +9,13 @@
       "doc": "Unique ICAO 24-bit address of the transponder in hex string representation."
     },
     {
-      "name": "callsign",
-      "type": "string",
-      "doc": "Callsign of the vehicle (8 chars). Can be null if no callsign has been received."
+          "name": "callsign",
+          "type": [
+                 	"null",
+                  	"string"
+                	],
+              "default": null,
+              "doc": "Callsign of the vehicle (8 chars). Can be null if no callsign has been received."
     },
     {
       "name":"countryOrigin",

@@ -43,7 +43,6 @@ public class OpenSkyNetwork {
             try {
                 return api.getStates(0, null, coordinates).getStates();
             } catch (Exception e) {
-
                 System.out.println(
                         ColouredSystemOutPrintln.ANSI_WHITE + ColouredSystemOutPrintln.ANSI_BG_RED +
                         "No answer from the OpenSKY network, retrying ...");

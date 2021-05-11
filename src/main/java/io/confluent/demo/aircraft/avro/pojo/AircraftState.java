@@ -5,17 +5,16 @@
  */
 package io.confluent.demo.aircraft.avro.pojo;
 
-import org.apache.avro.generic.GenericArray;
+import org.apache.avro.message.BinaryMessageDecoder;
+import org.apache.avro.message.BinaryMessageEncoder;
+import org.apache.avro.message.SchemaStore;
 import org.apache.avro.specific.SpecificData;
 import org.apache.avro.util.Utf8;
-import org.apache.avro.message.BinaryMessageEncoder;
-import org.apache.avro.message.BinaryMessageDecoder;
-import org.apache.avro.message.SchemaStore;
 
 @org.apache.avro.specific.AvroGenerated
 public class AircraftState extends org.apache.avro.specific.SpecificRecordBase implements org.apache.avro.specific.SpecificRecord {
-  private static final long serialVersionUID = -5302141821378930135L;
-  public static final org.apache.avro.Schema SCHEMA$ = new org.apache.avro.Schema.Parser().parse("{\"type\":\"record\",\"name\":\"AircraftState\",\"namespace\":\"io.confluent.demo.aircraft.avro.pojo\",\"fields\":[{\"name\":\"icao24\",\"type\":\"string\",\"doc\":\"Unique ICAO 24-bit address of the transponder in hex string representation.\"},{\"name\":\"callsign\",\"type\":\"string\",\"doc\":\"Callsign of the vehicle (8 chars). Can be null if no callsign has been received.\"},{\"name\":\"countryOrigin\",\"type\":\"string\",\"doc\":\"Country name inferred from the ICAO 24-bit address.\"},{\"name\":\"timePosition\",\"type\":\"double\",\"doc\":\"Unix timestamp (seconds) for the last position update. Can be null if no position report was received by OpenSky within the past 15s.\"},{\"name\":\"lastContact\",\"type\":\"long\",\"doc\":\"Unix timestamp (seconds) for the last update in general. This field is updated for any new, valid message received from the transponder.\"},{\"name\":\"longitude\",\"type\":\"double\",\"doc\":\"WGS-84 longitude in decimal degrees. Can be null.\"},{\"name\":\"latitude\",\"type\":\"double\",\"doc\":\"Unix timestamp (seconds) for the last update in general. This field is updated for any new, valid message received from the transponder.\"},{\"name\":\"baroAltitude\",\"type\":\"double\",\"doc\":\"Barometric altitude in meters. Can be null.\"},{\"name\":\"velocity\",\"type\":\"double\",\"doc\":\"Velocity over ground in m/s. Can be null.\"},{\"name\":\"trueTrack\",\"type\":\"double\",\"doc\":\"True track in decimal degrees clockwise from north (north=0). Can be null.\"},{\"name\":\"verticalRate\",\"type\":\"double\",\"doc\":\"Vertical rate in m/s. A positive value indicates that the airplane is climbing, a negative value indicates that it descends. Can be null.\"},{\"name\":\"geoAltitude\",\"type\":\"double\",\"doc\":\"Geometric altitude in meters. Can be null.\"},{\"name\":\"squawk\",\"type\":\"string\",\"doc\":\"The transponder code aka Squawk. Can be null.\"},{\"name\":\"spi\",\"type\":[\"null\",\"boolean\"],\"doc\":\"Whether flight status indicates special purpose indicator.\",\"default\":null},{\"name\":\"onGround\",\"type\":[\"null\",\"boolean\"],\"doc\":\"Boolean value which indicates if the position was retrieved from a surface position report.\",\"default\":null}]}");
+  private static final long serialVersionUID = -8504049713698274673L;
+  public static final org.apache.avro.Schema SCHEMA$ = new org.apache.avro.Schema.Parser().parse("{\"type\":\"record\",\"name\":\"AircraftState\",\"namespace\":\"io.confluent.demo.aircraft.avro.pojo\",\"fields\":[{\"name\":\"icao24\",\"type\":\"string\",\"doc\":\"Unique ICAO 24-bit address of the transponder in hex string representation.\"},{\"name\":\"callsign\",\"type\":[\"null\",\"string\"],\"doc\":\"Callsign of the vehicle (8 chars). Can be null if no callsign has been received.\",\"default\":null},{\"name\":\"countryOrigin\",\"type\":\"string\",\"doc\":\"Country name inferred from the ICAO 24-bit address.\"},{\"name\":\"timePosition\",\"type\":\"double\",\"doc\":\"Unix timestamp (seconds) for the last position update. Can be null if no position report was received by OpenSky within the past 15s.\"},{\"name\":\"lastContact\",\"type\":\"long\",\"doc\":\"Unix timestamp (seconds) for the last update in general. This field is updated for any new, valid message received from the transponder.\"},{\"name\":\"longitude\",\"type\":\"double\",\"doc\":\"WGS-84 longitude in decimal degrees. Can be null.\"},{\"name\":\"latitude\",\"type\":\"double\",\"doc\":\"Unix timestamp (seconds) for the last update in general. This field is updated for any new, valid message received from the transponder.\"},{\"name\":\"baroAltitude\",\"type\":\"double\",\"doc\":\"Barometric altitude in meters. Can be null.\"},{\"name\":\"velocity\",\"type\":\"double\",\"doc\":\"Velocity over ground in m/s. Can be null.\"},{\"name\":\"trueTrack\",\"type\":\"double\",\"doc\":\"True track in decimal degrees clockwise from north (north=0). Can be null.\"},{\"name\":\"verticalRate\",\"type\":\"double\",\"doc\":\"Vertical rate in m/s. A positive value indicates that the airplane is climbing, a negative value indicates that it descends. Can be null.\"},{\"name\":\"geoAltitude\",\"type\":\"double\",\"doc\":\"Geometric altitude in meters. Can be null.\"},{\"name\":\"squawk\",\"type\":\"string\",\"doc\":\"The transponder code aka Squawk. Can be null.\"},{\"name\":\"spi\",\"type\":[\"null\",\"boolean\"],\"doc\":\"Whether flight status indicates special purpose indicator.\",\"default\":null},{\"name\":\"onGround\",\"type\":[\"null\",\"boolean\"],\"doc\":\"Boolean value which indicates if the position was retrieved from a surface position report.\",\"default\":null}]}");
   public static org.apache.avro.Schema getClassSchema() { return SCHEMA$; }
 
   private static SpecificData MODEL$ = new SpecificData();
@@ -1380,7 +1379,13 @@ public class AircraftState extends org.apache.avro.specific.SpecificRecordBase i
   {
     out.writeString(this.icao24);
 
-    out.writeString(this.callsign);
+    if (this.callsign == null) {
+      out.writeIndex(0);
+      out.writeNull();
+    } else {
+      out.writeIndex(1);
+      out.writeString(this.callsign);
+    }
 
     out.writeString(this.countryOrigin);
 
@@ -1429,7 +1434,12 @@ public class AircraftState extends org.apache.avro.specific.SpecificRecordBase i
     if (fieldOrder == null) {
       this.icao24 = in.readString(this.icao24 instanceof Utf8 ? (Utf8)this.icao24 : null);
 
-      this.callsign = in.readString(this.callsign instanceof Utf8 ? (Utf8)this.callsign : null);
+      if (in.readIndex() != 1) {
+        in.readNull();
+        this.callsign = null;
+      } else {
+        this.callsign = in.readString(this.callsign instanceof Utf8 ? (Utf8)this.callsign : null);
+      }
 
       this.countryOrigin = in.readString(this.countryOrigin instanceof Utf8 ? (Utf8)this.countryOrigin : null);
 
@@ -1475,7 +1485,12 @@ public class AircraftState extends org.apache.avro.specific.SpecificRecordBase i
           break;
 
         case 1:
-          this.callsign = in.readString(this.callsign instanceof Utf8 ? (Utf8)this.callsign : null);
+          if (in.readIndex() != 1) {
+            in.readNull();
+            this.callsign = null;
+          } else {
+            this.callsign = in.readString(this.callsign instanceof Utf8 ? (Utf8)this.callsign : null);
+          }
           break;
 
         case 2:
