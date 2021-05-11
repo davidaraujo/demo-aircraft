@@ -2,20 +2,19 @@
 <project xmlns="http://maven.apache.org/POM/4.0.0"
          xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
          xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+
     <modelVersion>4.0.0</modelVersion>
 
     <groupId>io.confluent</groupId>
     <artifactId>demo-aircraft</artifactId>
     <version>1.0-SNAPSHOT</version>
-
     <organization>
         <name>Confluent, Inc.</name>
         <url>http://confluent.io</url>
     </organization>
     <url>http://confluent.io</url>
-
     <description>
-        Kafka demo for Schema Registry with examples in Avro, Protobuf and JSON Schema.
+        Aircraft location demo with examples in Avro, Protobuf and JSON Schema.
     </description>
 
     <developers>
@@ -37,9 +36,9 @@
     <properties>
         <confluent.version>5.5.1</confluent.version>
         <kafka.version>2.5.0</kafka.version>
-        <schema.registry.url>https://psrc-lz3xz.us-central1.gcp.confluent.cloud</schema.registry.url>
+        <schema.registry.url>{SCHEMA_REGISTRY_ENDPOINT}</schema.registry.url>
         <schema.registry.basic.auth.user.info>
-            CKBLMO2YEOPNSBRI:1smNBCCNjIffQbcAuF+8IE4lp5Vv+ki5c3sMjwainE1v9k/se4OsuhkCHpgnLitv
+            {SCHEMA_REGISTRY_API_KEY}:{SCHEMA_REGISTRY_API_SECRET}
         </schema.registry.basic.auth.user.info>
         <avro-maven-plugin>1.9.2</avro-maven-plugin>
         <protoc.jar.maven.plugin>3.11.1</protoc.jar.maven.plugin>
@@ -52,6 +51,7 @@
         <maven.compiler.plugin>3.8.1</maven.compiler.plugin>
         <maven-javadoc-plugin>3.2.0</maven-javadoc-plugin>
     </properties>
+
     <repositories>
         <repository>
             <id>confluent</id>
@@ -96,7 +96,6 @@
             <artifactId>json</artifactId>
             <version>20190722</version>
         </dependency>
-
         <dependency>
             <groupId>org.apache.kafka</groupId>
             <artifactId>kafka-clients</artifactId>
@@ -171,6 +170,7 @@
 
     <build>
         <plugins>
+            <!--  Schema Registry Maven Plugin
             <plugin>
                 <groupId>io.confluent</groupId>
                 <artifactId>kafka-schema-registry-maven-plugin</artifactId>
@@ -192,7 +192,7 @@
                     <goal>register</goal>
                 </goals>
             </plugin>
-           <!--  <plugin>
+            <plugin>
                 <groupId>io.confluent</groupId>
                 <artifactId>kafka-schema-registry-maven-plugin</artifactId>
                 <version>${confluent.version}</version>
@@ -213,7 +213,7 @@
                     <goal>register</goal>
                 </goals>
             </plugin> -->
-            <plugin> <!-- generate Avro code -->
+            <plugin> <!-- Generate Avro POJOs -->
                 <groupId>org.apache.avro</groupId>
                 <artifactId>avro-maven-plugin</artifactId>
                 <version>${avro-maven-plugin}</version>
@@ -233,7 +233,7 @@
                     </execution>
                 </executions>
             </plugin>
-            <plugin> <!-- generate JSON Schema code -->
+            <plugin> <!-- Generate JSON Schema POJOs -->
                 <groupId>org.jsonschema2pojo</groupId>
                 <artifactId>jsonschema2pojo-maven-plugin</artifactId>
                 <version>${jsonschema2pojo-maven-plugin}</version>
@@ -251,7 +251,7 @@
                     </execution>
                 </executions>
             </plugin>
-            <plugin> <!-- generate Protobuf code -->
+            <plugin> <!-- Generate Protobuf POJOs -->
                 <groupId>com.github.os72</groupId>
                 <artifactId>protoc-jar-maven-plugin</artifactId>
                 <version>${protoc.jar.maven.plugin}</version>
