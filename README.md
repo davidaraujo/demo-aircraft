@@ -20,11 +20,11 @@ We'll have 4 applications running:
     *  Produces aircraft location events to topic A.
 * **RouterService app (KStreams)**
     * Consumes aircraft location events from topics A and depending on its positioning produces to topic B (aircraft on the ground), C (aircraft in flight) or D (aircraft unidentified).
-* **OnGroundService**
+* **OnGroundService app**
   * Consumes aircraft location events from topics B.
-* **InFlightService**
+* **InFlightService app**
   * Consumes aircraft location events from topics C.
-* **UnidentifiedService**
+* **UnidentifiedService app**
   * Consumes aircraft location events from topics D. 
 
 ## Running as Avro
