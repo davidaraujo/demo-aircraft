@@ -13,7 +13,7 @@ from ADS-B and Mode S messages. The state of an aircraft is a summary of all tra
 information (mainly position, velocity, and identity) at a certain point in time.
 These states of aircraft can be retrieved as state vectors in the form of a JSON object.*
 
-![Alt text](aircraft-radar-white.png?raw=true "Order")
+![Alt text](aircraft-radar-blue.png?raw=true "Order")
 
 We'll have 4 applications running:
 * TrackingService app (producer)
