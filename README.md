@@ -34,22 +34,27 @@ Serialized messages using [this Avro schema](src/main/java/io/confluent/demo/air
 Replace $CCLOUD_PROPS with your Kafka properties file name inside the `src/main/resource` folder as exemplified [here](/src/main/resources/ccloud_example.properties).
 
 ### TrackingService
+*arg0 = Properties folder; arg1 = Confluent properties; arg2 = OpenSKY properties; arg3 = Output topic; arg4 = Client ID*
 ```bash
 mvn exec:java -Dexec.mainClass="io.confluent.demo.aircraft.avro.producer.TrackingService" -Dexec.args="./src/main/resources $CCLOUD_PROPS opensky.properties tracking.aviation.aircraft.avro TrackingService.avro"
 ```
 ### RouterService
+*arg0 = Properties folder; arg1 = Confluent properties; arg2 = Application ID; arg3 = Output topic 1; arg4 = Output topic 2; arg5 = Output topic 3; arg6 = Client ID*
 ```bash
 mvn exec:java -Dexec.mainClass="io.confluent.demo.aircraft.avro.kstreams.RouterKStreamsService" -Dexec.args="./src/main/resources $CCLOUD_PROPS RouterService.avro tracking.aviation.aircraft.avro tracking.aviation.aircraft_onground.avro tracking.aviation.aircraft_inflight.avro tracking.aviation.aircraft_unidentified.avro Kstreams.avro.client.1"
 ```
 ### OnGroundService
+*arg0 = Properties folder; arg1 = Confluent properties; arg2 = Input topic; arg3 = Group ID; arg4 = Client ID*
 ```bash
 mvn exec:java -Dexec.mainClass="io.confluent.demo.aircraft.avro.consumer.GenericAvroConsumerService" -Dexec.args="./src/main/resources $CCLOUD_PROPS tracking.aviation.aircraft_onground.avro OnGroundService.avro OnGroundConsumer.avro.client.1"
 ```
 ### InFlightService
+*arg0 = Properties folder; arg1 = Confluent properties; arg2 = Input topic; arg3 = Group ID; arg4 = Client ID*
 ```bash
 mvn exec:java -Dexec.mainClass="io.confluent.demo.aircraft.avro.consumer.GenericAvroConsumerService" -Dexec.args="./src/main/resources $CCLOUD_PROPS tracking.aviation.aircraft_inflight.avro InFlightService.avro InFlightConsumer.avro.client.1"
 ```
 ### UnidentifiedService
+*arg0 = Properties folder; arg1 = Confluent properties; arg2 = Input topic; arg3 = Group ID; arg4 = Client ID*
 ```bash
 mvn exec:java -Dexec.mainClass="io.confluent.demo.aircraft.avro.consumer.GenericAvroConsumerService" -Dexec.args="./src/main/resources $CCLOUD_PROPS tracking.aviation.aircraft_unidentified.avro UnidentifiedService.avro UnidentifiedConsumer.avro.client.1"
 ```
@@ -61,22 +66,27 @@ Serialized messages using [this Protobuf schema](src/main/java/io/confluent/demo
 Replace $CCLOUD_PROPS with your Kafka properties file name inside the `src/main/resource` folder as exemplified [here](/src/main/resources/ccloud_example.properties).
 
 ### TrackingService
+*arg0 = Properties folder; arg1 = Confluent properties; arg2 = OpenSKY properties; arg3 = Output topic; arg4 = Client ID*
 ```bash
 mvn exec:java -Dexec.mainClass="io.confluent.demo.aircraft.protobuf.producer.TrackingService" -Dexec.args="./src/main/resources $CCLOUD_PROPS opensky.properties tracking.aviation.aircraft.protobuf TrackingService.protobuf"
 ```
 ### RouterService
+*arg0 = Properties folder; arg1 = Confluent properties; arg2 = Application ID; arg3 = Output topic 1; arg4 = Output topic 2; arg5 = Output topic 3; arg6 = Client ID*
 ```bash
 mvn exec:java -Dexec.mainClass="io.confluent.demo.aircraft.protobuf.kstreams.RouterKStreamsService" -Dexec.args="./src/main/resources $CCLOUD_PROPS RouterService.protobuf tracking.aviation.aircraft.protobuf tracking.aviation.aircraft_onground.protobuf tracking.aviation.aircraft_inflight.protobuf tracking.aviation.aircraft_unidentified.protobuf Kstreams.protobuf.client.1"
 ```
 ### OnGroundService
+*arg0 = Properties folder; arg1 = Confluent properties; arg2 = Input topic; arg3 = Group ID; arg4 = Client ID*
 ```bash
 mvn exec:java -Dexec.mainClass="io.confluent.demo.aircraft.protobuf.consumer.GenericProtobufConsumerService" -Dexec.args="./src/main/resources $CCLOUD_PROPS tracking.aviation.aircraft_onground.protobuf OnGroundService.protobuf OnGroundConsumer.protobuf.client.1"
 ```
 ### InFlightService
+*arg0 = Properties folder; arg1 = Confluent properties; arg2 = Input topic; arg3 = Group ID; arg4 = Client ID*
 ```bash
 mvn exec:java -Dexec.mainClass="io.confluent.demo.aircraft.protobuf.consumer.GenericProtobufConsumerService" -Dexec.args="./src/main/resources $CCLOUD_PROPS tracking.aviation.aircraft_inflight.protobuf InFlightService.protobuf InFlightConsumer.protobuf.client.1"
 ```
 ### UnidentifiedService
+*arg0 = Properties folder; arg1 = Confluent properties; arg2 = Input topic; arg3 = Group ID; arg4 = Client ID*
 ```bash
 mvn exec:java -Dexec.mainClass="io.confluent.demo.aircraft.protobuf.consumer.GenericProtobufConsumerService" -Dexec.args="./src/main/resources $CCLOUD_PROPS tracking.aviation.aircraft_unidentified.protobuf UnidentifiedService.protobuf UnidentifiedConsumer.protobuf.client.1"
 ```
@@ -88,22 +98,27 @@ Serialized messages using [this JSON schema](src/main/java/io/confluent/demo/air
 Replace $CCLOUD_PROPS with your Kafka properties file name inside the `src/main/resource` folder as exemplified [here](/src/main/resources/ccloud_example.properties).
 
 ### TrackingService
+*arg0 = Properties folder; arg1 = Confluent properties; arg2 = OpenSKY properties; arg3 = Output topic; arg4 = Client ID*
 ```bash
 mvn exec:java -Dexec.mainClass="io.confluent.demo.aircraft.jsonschema.producer.TrackingService" -Dexec.args="./src/main/resources $CCLOUD_PROPS opensky.properties tracking.aviation.aircraft.json TrackingService.json"
 ```
 ### RouterService
+*arg0 = Properties folder; arg1 = Confluent properties; arg2 = Application ID; arg3 = Output topic 1; arg4 = Output topic 2; arg5 = Output topic 3; arg6 = Client ID*
 ```bash
 mvn exec:java -Dexec.mainClass="io.confluent.demo.aircraft.jsonschema.kstreams.RouterKStreamsService" -Dexec.args="./src/main/resources $CCLOUD_PROPS RouterService.json tracking.aviation.aircraft.json tracking.aviation.aircraft_onground.json tracking.aviation.aircraft_inflight.json tracking.aviation.aircraft_unidentified.json Kstreams.json.client.1"
 ```
 ### OnGroundService
+*arg0 = Properties folder; arg1 = Confluent properties; arg2 = Input topic; arg3 = Group ID; arg4 = Client ID*
 ```bash
 mvn exec:java -Dexec.mainClass="io.confluent.demo.aircraft.jsonschema.consumer.GenericJsonConsumerService" -Dexec.args="./src/main/resources $CCLOUD_PROPS tracking.aviation.aircraft_onground.json OnGroundService.json OnGroundConsumer.json.client.1"
 ```
 ### InFlightService
+*arg0 = Properties folder; arg1 = Confluent properties; arg2 = Input topic; arg3 = Group ID; arg4 = Client ID*
 ```bash
 mvn exec:java -Dexec.mainClass="io.confluent.demo.aircraft.jsonschema.consumer.GenericJsonConsumerService" -Dexec.args="./src/main/resources $CCLOUD_PROPS tracking.aviation.aircraft_inflight.json InFlightService.json InFlightConsumer.json.client.1"
 ```
 ### UnidentifiedService
+*arg0 = Properties folder; arg1 = Confluent properties; arg2 = Input topic; arg3 = Group ID; arg4 = Client ID*
 ```bash
 mvn exec:java -Dexec.mainClass="io.confluent.demo.aircraft.jsonschema.consumer.GenericJsonConsumerService" -Dexec.args="./src/main/resources $CCLOUD_PROPS tracking.aviation.aircraft_unidentified.json UnidentifiedService.json UnidentifiedConsumer.json.client.1"
 ```
